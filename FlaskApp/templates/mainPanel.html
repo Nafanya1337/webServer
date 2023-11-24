@@ -12,16 +12,36 @@
             padding: 20px;
         }
 
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .button-group button {
+            margin: 0 10px; /* Adds a 10px margin on the left and right of each button */
+            padding: 10px 20px; /* Adjust padding to ensure buttons are not too narrow */
+        }
+
+        /* If you want to ensure that the buttons do not wrap onto a new line, you can add this */
+        .button-group {
+            flex-wrap: nowrap;
+        }
+
         .login-panel, .admin-info {
             background-color: white;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            border: black;
+            border-radius: 5px;
         }
 
         .form-group {
             margin-bottom: 15px;
+            border: black;
+            border-radius: 5px;
         }
 
         label {
@@ -35,7 +55,7 @@
             margin-bottom: 10px;
             border: 1px solid #ffffff;
             border-radius: 5px;
-            text-align:center;
+            text-align: center;
         }
 
         button {
@@ -46,6 +66,7 @@
             background-color: #5c6bc0;
             color: white;
             cursor: pointer;
+            margin-top: 15px;
         }
 
         button:hover {
@@ -59,23 +80,71 @@
 </head>
 <body>
 
-<div class="admin-info">
+
+<!-- Add this inside your <body> tag, preferably at the beginning -->
+<div class="button-group">
+    <button onclick="changeTab('shift')">Смена</button>
+    <button onclick="changeTab('computers')">Компьютеры</button>
+    <button onclick="changeTab('clients')">Клиенты</button>
+</div>
+
+
+<!-- Rest of your admin-info and other divs -->
+
+<div id="shiftContent" class="admin-info">
     <div class="form-group">
         <label for="admin-name">ФИО администратора</label>
         <input type="text" id="admin-name" name="admin-name" class="disabled" disabled>
     </div>
     <div class="form-group">
-        <label for="time">Время</label>
-        <input type="text" id="time" name="time" value="24.10.2023 21:55:32" class="disabled" disabled>
+        <label for="time_start">Начало смены</label>
+        <input type="text" id="time_start" name="time_start" value="-" class="disabled" disabled>
+    </div>
+    <div class="form-group">
+        <label for="time_end">Конец смены</label>
+        <input type="text" id="time_end" name="time_end" value="-" class="disabled" disabled>
+    </div>
+    <div class="form-group">
+        <label for="revenue">Выручка</label>
+        <input type="text" id="revenue" name="revenue" value="0" class="disabled" disabled>
     </div>
     <button onclick="startShift()">Открыть смену</button>
 </div>
 
+
+<div id="computersContent" class="admin-info" style="display: none">
+    <label>Компьютеры</label>
+    <button onclick="reserveComputer()">Забронировать компьютер</button>
+</div>
+
+<div id="clientsContent" class="admin-info" style="display: none">
+    <label>Клиенты</label>
+</div>
+
 <script>
+    // Existing JavaScript here
+
+    // Add this function to handle tab changes
+    function changeTab(tabName) {
+        // Скрыть все содержимое
+        document.querySelectorAll('.admin-info').forEach(content => {
+            content.style.display = 'none';
+        });
+
+        // Показать содержимое для выбранной вкладки
+        document.getElementById(tabName + 'Content').style.display = 'block';
+    }
+
+
     // Add your JavaScript here
     function startShift() {
         // Logic to handle the start of a shift
     }
+
+    function reserveComputer() {
+        // Logic to handle the start of a shift
+    }
+
 </script>
 </body>
 </html>
