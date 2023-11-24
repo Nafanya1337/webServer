@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Club Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-panel, .admin-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 97%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            text-align:center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #5c6bc0;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3f51b5;
+        }
+
+        .disabled {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-info">
+    <div class="form-group">
+        <label for="admin-name">ФИО администратора</label>
+        <input type="text" id="admin-name" name="admin-name" class="disabled" disabled>
+    </div>
+    <div class="form-group">
+        <label for="time">Время</label>
+        <input type="text" id="time" name="time" value="24.10.2023 21:55:32" class="disabled" disabled>
+    </div>
+    <button onclick="startShift()">Открыть смену</button>
+</div>
+
+<script>
+    // Add your JavaScript here
+    function startShift() {
+        // Logic to handle the start of a shift
+    }
+</script>
+</body>
+</html>
