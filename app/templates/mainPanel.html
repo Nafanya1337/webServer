@@ -114,11 +114,18 @@
 
 <div id="computersContent" class="admin-info" style="display: none">
     <label>Компьютеры</label>
-    <button onclick="reserveComputer()">Забронировать компьютер</button>
+    <button onclick="window.location.href='{{ url_for('showComputersTable', user_id=user_id) }}'">Забронировать компьютер</button>
+    <button onclick="window.location.href='{{ url_for('showComputersTable', user_id=user_id) }}'" type="button">Посмотреть таблицу компьютеров</button>
 </div>
 
+<!-- Предположим, что user_id доступен в шаблоне как переменная user_id -->
 <div id="clientsContent" class="admin-info" style="display: none">
     <label>Клиенты</label>
+    <button onclick="addUser()">Добавить клиента</button>
+    <!-- Обратите внимание на использование url_for() функции для генерации правильного URL -->
+    <button onclick="window.location.href='{{ url_for('showClientsTable', user_id=user_id) }}'" type="button">Посмотреть таблицу клиентов</button>
+
+
 </div>
 
 <script>
@@ -138,13 +145,14 @@
 
     // Add your JavaScript here
     function startShift() {
-        // Logic to handle the start of a shift
+        const shiftStartButton = document.getElementById('shiftStartButton');
+        shiftStartButton.innerText = 'Закрыть смену';
+        shiftStartButton.classList.add('active');
     }
 
-    function reserveComputer() {
-        // Logic to handle the start of a shift
-    }
+    function addUser() {
 
+    }
 </script>
 </body>
 </html>
