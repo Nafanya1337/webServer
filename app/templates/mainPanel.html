@@ -50,7 +50,7 @@
         }
 
         input[type="text"], input[type="password"] {
-            width: 97%;
+            width: 99%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ffffff;
@@ -76,9 +76,134 @@
         .disabled {
             background-color: #ccc;
         }
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #f8f8f8;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Add this to your existing style tags in the head section */
+        input[type="text"]#phoneNumber {
+            width: calc(100% - 20px); /* Adjust width as necessary, accounting for padding */
+            padding: 15px; /* Increase padding */
+            margin-bottom: 20px; /* Add some margin */
+            border: 2px solid #5c6bc0; /* Make border thicker and use the theme color */
+            font-size: 18px; /* Increase font size */
+        }
+
+        input[type="text"], input[type="date"] {
+            box-shadow: 0 0 5px rgba(81, 203, 238, 1); /* Add a subtle shadow with a blue glow */
+            border: 1px solid #5c6bc0; /* Blue border to match your theme */
+            height: 40px; /* Increase the height for better visibility */
+            margin-top: 10px; /* Add some margin to the top */
+            margin-bottom: 20px; /* Add more space to the bottom */
+            font-size: 16px; /* Increase font size */
+        }
+
+        input[type="submit"] {
+            background-color: #5c6bc0; /* Theme color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px; /* Larger font size */
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3f51b5; /* Darker shade when hovered */
+        }
+
+        /* Style the select element to match */
+        select#tariff {
+            width: calc(100% - 20px);
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #cccccc;
+            font-size: 18px;
+            background-color: white;
+        }
     </style>
 </head>
-<body>
+<body data-user-id="{{ user_id }}">
+
+<!-- The Modal -->
+<div id="bookingModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Бронирование компьютера</h2>
+        <form id="bookingForm">
+            <label for="phoneNumber">Номер телефона:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" required>
+            <label for="tariff">Тариф:</label>
+            <select id="tariff" name="tariff" required>
+                <!-- Option values should be populated based on your tariffs -->
+                <option value="1">Тариф 1</option>
+                <option value="2">Тариф 2</option>
+                <!-- Add other options here -->
+            </select>
+            <label for="hours">Количество часов:</label>
+            <input type="number" id="hours" name="hours" required>
+            <input type="submit" value="Забронировать">
+        </form>
+    </div>
+</div>
+
+<!-- The Add User Modal -->
+<div id="addUserModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+        <h2>Добавить нового клиента</h2>
+        <form id="addUserForm">
+            <label for="userPhone">Телефон:</label>
+            <input type="text" id="userPhone" name="userPhone" class="input-field" required>
+            <label for="userFio">ФИО:</label>
+            <input type="text" id="userFio" name="userFio" class="input-field" required>
+            <label for="userBirthday">Дата рождения:</label>
+            <input type="text" id="userBirthday" name="userBirthday" class="input-field" required>
+            <input type="submit" value="Добавить клиента">
+        </form>
+    </div>
+</div>
+
+<div class="shift-status" style="display: none; text-align: center; color: green; margin-bottom: 20px;">
+    Смена №<span id="shift-id-placeholder"></span> идет
+</div>
 
 
 <!-- Add this inside your <body> tag, preferably at the beginning -->
@@ -108,22 +233,33 @@
         <label for="revenue">Выручка</label>
         <input type="text" id="revenue" name="revenue" value="0" class="disabled" disabled>
     </div>
-    <button onclick="startShift()">Открыть смену</button>
+    <button class="shift-button" onclick="toggleShift({{ user_id }})">Открыть смену</button>
+    <button class="requests-button"
+            onclick="window.location.href='{{ url_for('showRequestsTable', user_id=user_id) }}'">Посмотреть заявки на
+        бронь
+    </button>
+    <button class="requests-button"
+            onclick="window.location.href='{{ url_for('showShiftsTable', user_id=user_id) }}'">Посмотреть таблицу смен
+    </button>
 </div>
 
 
 <div id="computersContent" class="admin-info" style="display: none">
     <label>Компьютеры</label>
-    <button onclick="window.location.href='{{ url_for('showComputersTable', user_id=user_id) }}'">Забронировать компьютер</button>
-    <button onclick="window.location.href='{{ url_for('showComputersTable', user_id=user_id) }}'" type="button">Посмотреть таблицу компьютеров</button>
+    <button id="bookingButton">Забронировать компьютер</button>
+    <button onclick="window.location.href='{{ url_for('showComputersTable', user_id=user_id) }}'" type="button">
+        Посмотреть таблицу компьютеров
+    </button>
 </div>
 
 <!-- Предположим, что user_id доступен в шаблоне как переменная user_id -->
 <div id="clientsContent" class="admin-info" style="display: none">
     <label>Клиенты</label>
-    <button onclick="addUser()">Добавить клиента</button>
+    <button onclick="document.getElementById('addUserModal').style.display='block'">Добавить клиента</button>
     <!-- Обратите внимание на использование url_for() функции для генерации правильного URL -->
-    <button onclick="window.location.href='{{ url_for('showClientsTable', user_id=user_id) }}'" type="button">Посмотреть таблицу клиентов</button>
+    <button onclick="window.location.href='{{ url_for('showClientsTable', user_id=user_id) }}'" type="button">Посмотреть
+        таблицу клиентов
+    </button>
 
 
 </div>
@@ -142,17 +278,244 @@
         document.getElementById(tabName + 'Content').style.display = 'block';
     }
 
+    function toggleShift(user_id) {
+        const shiftButton = document.querySelector('.shift-button');
+        const isShiftOpen = localStorage.getItem('isShiftOpen') === 'true';
+        const adminIdWhoOpenedShift = localStorage.getItem('admin_id');
+        if (!isShiftOpen) {
+            // Logic to open the shift
+            fetch(`/${user_id}/mainPannel/open_shift`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({user_id: user_id})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.last_id !== undefined) {
+                        localStorage.setItem('isShiftOpen', 'true');
+                        localStorage.setItem('admin_id', user_id.toString());
+                        localStorage.setItem('currentShiftId', data.last_id);
+                        shiftButton.textContent = 'Закрыть смену';
+                        fetchShiftInfo(user_id, data.last_id); // Fetch shift info after setting ID
+                        document.querySelector('.shift-status').style.display = 'block';
+                        document.getElementById('shift-id-placeholder').textContent = data.last_id;
+                    } else {
+                        throw new Error('No shift ID returned from the server');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            if (user_id === adminIdWhoOpenedShift) {
+                fetch(`/${user_id}/mainPannel/close_shift`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({user_id: user_id})
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        localStorage.setItem('isShiftOpen', 'false');
+                        localStorage.removeItem('currentShiftId'); // Remove shift ID when closed
+                        localStorage.removeItem('admin_id');
+                        shiftButton.textContent = 'Открыть смену';
+                        document.querySelector('.shift-status').style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
 
-    // Add your JavaScript here
-    function startShift() {
-        const shiftStartButton = document.getElementById('shiftStartButton');
-        shiftStartButton.innerText = 'Закрыть смену';
-        shiftStartButton.classList.add('active');
+            } else {
+                alert('Только администратор, который открыл смену, может её закрыть.');
+            }
+
+            // This part of the code should be removed as it is redundant and can lead to race conditions
+            // localStorage.setItem('isShiftOpen', 'false');
+            // shiftButton.textContent = 'Открыть смену';
+            document.getElementById('admin-name').value = '-';
+            document.getElementById('time_start').value = '-';
+            document.getElementById('time_end').value = '-';
+            document.getElementById('revenue').value = '0';
+        }
     }
 
-    function addUser() {
 
+    // Adjust initialization to include user_id
+    function initializeShiftState() {
+        const user_id = document.body.getAttribute('data-user-id');
+        const isShiftOpen = localStorage.getItem('isShiftOpen') === 'true';
+        const shiftButton = document.querySelector('.shift-button');
+        const currentShiftId = localStorage.getItem('currentShiftId');
+        shiftButton.textContent = isShiftOpen ? 'Закрыть смену' : 'Открыть смену';
+        shiftButton.onclick = () => toggleShift(user_id);
+        console.log(localStorage.getItem("admin_id"))
+        // If there's an open shift, fetch its information
+        if (isShiftOpen && currentShiftId) {
+            fetchShiftInfo(user_id, currentShiftId);
+            document.querySelector('.shift-status').style.display = 'block';
+            document.getElementById('shift-id-placeholder').textContent = currentShiftId;
+        }
+        if (isShiftOpen && localStorage.getItem('admin_id') !== user_id) {
+            shiftButton.disabled = true;
+            shiftButton.textContent = 'Смена открыта другим администратором';
+            shiftButton.style.backgroundColor = '#838383'; // Set the background color
+            shiftButton.style.color = '#ffffff'; // Set the text color if needed
+        }
     }
+
+    function fetchShiftInfo(user_id, shift_id) {
+        console.log(`Fetching shift info for user ${user_id} and shift ${shift_id}`); // Debug log
+        // Fetch the current shift info from the server
+        fetch(`/${user_id}/mainPannel/get_shift_info/${shift_id}`, {
+            method: 'GET'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(shiftInfo => {
+                console.log('Shift info received:', shiftInfo); // Debug log
+                // Use the shift information to update the form fields
+                document.getElementById('admin-name').value = shiftInfo.admin_name || '-';
+                document.getElementById('time_start').value = shiftInfo.time_start || '-';
+                document.getElementById('time_end').value = shiftInfo.time_end || '-';
+                document.getElementById('revenue').value = shiftInfo.revenue || '0';
+            })
+            .catch(error => {
+                console.error('Error fetching shift info:', error);
+            });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', initializeShiftState);
+
+    // Get the modal
+    var bookingModal = document.getElementById("bookingModal");
+
+    // Get the button that opens the modal
+    var bookingBtn = document.getElementById("bookingButton");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    bookingBtn.onclick = function () {
+        bookingModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        bookingModal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == bookingModal) {
+            bookingModal.style.display = "none";
+        }
+    }
+
+    function loadTariffs() {
+        fetch('/path_to_your_flask_route_that_returns_tariffs')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('tariff');
+                select.innerHTML = ''; // Clear existing options
+                data.tariffs.forEach(tariff => {
+                    const option = document.createElement('option');
+                    option.value = tariff.id_tariff;
+                    option.textContent = `${tariff.description} - ${tariff.cost} per hour`;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching tariff data:', error));
+    }
+
+    // Call the function to load tariffs when the document is ready
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTariffs();
+        // ... other initialization code ...
+    });
+
+    document.getElementById('bookingForm').onsubmit = function (event) {
+        event.preventDefault();
+
+        // Get form values
+        var phoneNumber = document.getElementById('phoneNumber').value;
+        var tariffId = document.getElementById('tariff').value;
+        var reserveHours = document.getElementById('hours').value;
+
+        // Make an AJAX call to the Flask route
+        fetch('/reserve_computer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'phone_number': phoneNumber,
+                'tariff_id': tariffId,
+                'reserve_hours': reserveHours
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // Show a message with the result
+                    document.getElementById('revenue').value = data.new_revenue; // Update the revenue field
+                    bookingModal.style.display = "none"; // Close the modal
+                } else {
+                    alert(data.message); // Show the error message
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error making reservation');
+            });
+    };
+
+    // Function to close modals
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "none";
+    }
+
+    // Handle the add user form submission
+    document.getElementById('addUserForm').onsubmit = function (event) {
+        event.preventDefault();
+
+        // Get form values
+        var userPhone = document.getElementById('userPhone').value;
+        var userFio = document.getElementById('userFio').value;
+        var userBirthday = document.getElementById('userBirthday').value;
+
+        // Make an AJAX call to the Flask route
+        fetch('/add_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'phone': userPhone,
+                'fio': userFio,
+                'birthday': userBirthday
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.resulttext); // Show a message with the result
+                closeModal('addUserModal'); // Close the modal
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding new user');
+            });
+    };
 </script>
 </body>
 </html>

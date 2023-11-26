@@ -1,3 +1,6 @@
+{% extends "bootstrap/alert.html" %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +25,14 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        .alert.alert-warning {
+            position: absolute; /* Добавьте это */
+            top: 0; /* Положение сверху страницы */
+            width: 100%; /* Ширина на всю страницу */
+            margin-top: 0; /* Удалите отступ сверху */
         }
 
         .form-group {
@@ -77,3 +88,4 @@
 </div>
 </body>
 </html>
+{% endblock %}
